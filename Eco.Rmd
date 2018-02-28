@@ -1,0 +1,28 @@
+---
+title: "Eco"
+author: "Jaswinder Singh"
+date: "30 November 2015"
+output: html_document
+---
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+
+library(xlsx)
+
+Sleep75<-read.xlsx("/Users/jas/Desktop/Eco/sleep75.xls",sheetIndex = 1)
+  
+head(Sleep75)
+
+men<-subset(Sleep75,Sleep75$X1.2==1)
+men
+female<-subset(Sleep75,Sleep75$X1.2==0)
+female
+
+menResult<-lm(Sleep75$X3113~Sleep75$X1.2==1)
+
+femaleResult<-lm(Sleep75$X3113~Sleep75$X1.2==0)
+
+summary(menResult)
+
+```
+

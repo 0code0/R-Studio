@@ -1,0 +1,233 @@
+---
+title: "Compare The Clustering Algorithms"
+author: "Jaswinder Singh & Shubham Kalra"
+date: "15 November 2015"
+output: word_document
+---
+```{r echo=FALSE,message = FALSE,warning=FALSE}
+
+library(cluster)
+library(xlsx)
+library(clue)
+library(cba)
+library(fpc)
+
+```
+
+
+INTRODUCTION
+
+Data mining is a process of extracting or mining knowledge from large dataset. In the knowledge discovery process, we recognize the pattern and assign that pattern to a particular class. Thus, it is important how a data mining system search patterns and assign it to a class. For the same activity, on the basis of their working, different techniques are available cluster analysis is one of them.
+
+CLUSTER ANALYSIS
+
+Data clustering is a field of machine learning that has been explored for several decades. By definition, data clustering (or just clustering), also called cluster analysis, segmentation analysis, taxonomy analysis, or unsupervised learning, is a method that creates groups of objects, or clusters, in such a way that objects (instances) in one cluster are very similar and objects in different clusters are quite distinct. As a process, clustering is very useful for exploring and analyzing large amounts of data in order to discover useful information. The main goal of clustering algorithms is to assign instances with similar properties to the same groups and dissimilar instances to different groups. In General, clustering algorithms can be divided into two categories: hard (crisp) and fuzzy (soft) clustering. In hard clustering, an instance belongs to one and only one cluster, while in fuzzy clustering, an instance may belong to two or more clusters with some probabilities.
+
+In cluster analysis, we categorize our data into different group on the basis of their similarity or according to some defined criteria such that objects within a cluster have high similarity in comparison to one another, but they are very dissimilar to objects in other clusters. Cluster analysis is a general activity, and a method of classification which we have been using, in our day-to-day life frequently from the child age. By clustering, we have tried to find out density of data and relationship among data attributes.
+
+
+```{r echo=FALSE }
+# Data Set
+#Iris Data Set
+iris<- read.csv("iris.csv")
+irisNoClass<-iris
+irisNoClass$class <- NULL
+irisNoClass$X<- NULL
+
+# End Of iris Data Set
+
+
+
+```
+
+
+```{r echo=FALSE}
+# K Mean Start
+
+plot(irisNoClass)
+New<-read.csv("/Users/jas/Desktop/kmeanDataSet.csv")
+
+
+KMeanResult<-kmeans(irisNoClass,3)
+
+table(iris$class,KMeanResult$cluster)
+
+plot(KMeanResult$cluster,col = KMeanResult$cluster)  
+ 
+matixKMeanResult<-as.matrix(irisNoClass)
+
+clusplot(irisNoClass,KMeanResult$cluster,lines = 0,color = TRUE,shade = TRUE)
+
+plot(matixKMeanResult,col =KMeanResult$cluster,main = "Kmeans Cluster",pch = 20,cex = 2)
+
+
+# End of K mean
+
+```
+
+
+
+PARTITIONING METHODS FOR CLUSTERING 
+
+These methods constructs K-partition from a data set of n-records i.e. it classify the data into k groups where (K << n). Deng et al. proposed a partition based methods for cluster analysis. One of the popular algorithms for cluster analysis is K-mean based on partitioning method, which creates the cluster of records on the basis of the mean value and difference of record with the mean value. Main drawback of K-mean algorithm is it works for only numerical data. Many of the previous algorithms have focused on numerical data because its inherent properties can be exploited to naturally define distance function between two points but, distance functions for categorical datasets are not naturally defined. Data mining deals with very large dataset and dataset contain many categorical attributes. So algorithm designed for clustering must be scalable and work for the nonnumeric data as well. To overcome with the problem of categorical data in the K-mean algorithm, we use K-medoid algorithm, which works on categorical data and is scalable.
+
+DEFINATION OF TERMS
+
+Categorical Data: As referred in the paper categorical data term means data objects which have only categorical attribute. Here we consider all single valued attribute as a categorical attribute and do not consider multi-valued attribute as a categorical attribute.
+
+Categorical Domains and Attributes: Let X1, X2, X3..Xd be the d categorical attributes defining a space Q(??) and Dom(X1), Dom(X2), .. Dom(Xd) the domain of attribute. Dom(X1) is defined as all possible values for the attribute X1 and it is unordered.
+
+Categorical Objects: Let R be set of categorical objects {R1, R2, R3.....RN}. We can define Ri = Rj (Equivalent of Categorical objects, overlap method) If Rik = Rjk for all k = 1 to d,
+In this project we have clustered records based on data driven similarity measures, overlap measure is one of them.
+
+Similarity Measure: Let X and Y be two categorical objects contain d attributes. The similarity measure between X and Y can be defined as total similarity of the respective attribute categories of the two objects. The greater the value of the total similarity, it represents more closeness of two objects. Note that we have converted measures that were originally proposed as distance to similarity measures in order to make the measures comparable in this study. The measures discussed henceforth will all be in the context of similarity, with distance measures being converted using the formula:
+ 
+Almost all similarity measures assign a similarity value between two data instances X and Y belonging to the data set D as follows:
+ 
+Where Sk(Xk, Yk) is the per-attribute similarity between two values for the categorical attribute Ak. The quantity wk denotes the weight assigned to the attribute Ak.
+
+K-MEDOID ALGORITHM
+
+Basic K-medoid Algorithm: Sequential K-medoid algorithm works by assigning K initial data objects from the dataset as medoids for K-clusters. In next step algorithm selects one by one categorical object from the dataset and assign it to the proper cluster i.e. cluster whose medoid is having maximum similarity with current record and recomputed medoid of assigned cluster. When all objects are allocated to respective clusters algorithm rechecks the similarity of all categorical objects with current medoid assigned to all clusters. If a categorical object is found whose similarity is greater to some other cluster medoid then, reallocation or shuffling is performed.
+
+Data
+Count to store similarity with cluster medoid
+
+I/P
+Number of cluster (k)
+Dataset of categorical objects (DS)
+
+Process
+
+Step-1:
+Select k-initial categorical objects from the dataset and assign them as initial medoid of k-cluster.
+
+Step-2:
+Select one by one categorical data point object from the dataset and assign it to the proper cluster i.e. assign it to the cluster whose medoid is most similar with current data point. Formally
+For every Ri in DS
+{
+For (j=1; j<=k; j++)
+Count = Sim (Yj, Ri);
+Where Yj is the current medoid of cluster
+and k is number of clusters.
+Index: = Index number of cluster to whom
+Ri is most similar
+Add Ri object to index cluster and
+recalculate the centroid or medoid
+}
+
+Step-3:
+When all objects are allocated to clusters. Recheck the similarity of all categorical objects with current medoids assigned to all clusters. If a categorical object is found which is nearest to some other cluster medoid then de-allocate from the current cluster and allocate categorical object to new cluster & recalculate medoid
+
+Step-4:
+Repeat step-3 until no object has changed clusters after a full cycle test of whole data set.
+
+
+```{r echo=FALSE}
+# k medoids start 
+
+
+kmedoidspams<-pamk(irisNoClass)
+kmedoidspams$pamobject$clustering
+
+layout(matrix(c(1,2),1,2))
+plot(kmedoidspams$pamobject)
+layout(matrix(1))
+
+
+KMeanResult<-kmeans(irisNoClass,2)
+plot(table(iris$class,KMeanResult$cluster))
+plot(KMeanResult)
+kmedoidsResult<-pam(irisNoClass,2)
+table(iris$class,kmedoidsResult$clustering)
+plot(iris,col = KMeanResult$cluster)
+
+clusplot(irisNoClass,kmedoidsResult$clustering,color = TRUE,shade = TRUE,lines = 0)
+
+#K medoids End
+```
+
+That's the main drawback. Usually, PAM takes much longer to run than k-means. As it involves computing all pairwise distances, it is O(n^2*k*i); whereas k-means runs in O(n*k* i) where usually, k times the number of iterations is k*i << n.
+
+
+```{r echo=FALSE}
+# Hierarchical Cluster 
+
+HClustering <- dist(as.matrix(irisNoClass))
+
+plot(HClustering)
+
+logpdata<-log1p(HClustering)
+
+plot(logpdata)
+
+agenesdata<-agnes(logpdata,diss = TRUE,method = "complete",stand = TRUE)
+agenesdata$order
+
+hclustera<-hclust(HClustering,method = "complete")
+hclustera$merge
+
+plot(agenesdata$order,col= agenesdata$order)
+clusplot(irisNoClass,agenesdata$order,lines = 0,color = TRUE,shade = TRUE)
+
+ggdendrogram(agenesdata,rotate = TRUE,size = 3)
+
+
+# End of Hierarchical Cluster 
+
+
+```
+
+
+```{r echo=FALSE}
+
+
+x <- rbind(matrix(rnorm(100, mean = 0.5, sd = 4.5), ncol = 2),
+           matrix(rnorm(100, mean = 0.5, sd = 0.1), ncol = 2))
+x
+colnames(x) <- c("x", "y")
+
+# using 2 clusters because we know the data comes from two groups
+cl <- kmeans(x, 2) 
+cl
+kclus <- pam(x,2)
+
+kclus$medoids
+par(mfrow=c(1,2))
+
+plot(x, col = kclus$clustering, main="Kmedoids Cluster")
+
+points(kclus$medoids, col = 1:3, pch = 10, cex = 4)
+
+plot(x, col = cl$cluster, main="Kmeans Cluster")
+
+points(cl$centers, col = 1:3, pch = 10, cex = 4)
+
+
+
+```
+
+
+
+
+```{r echo=FALSE}
+
+# Rock Algo
+
+
+
+irisNoClassMatrix<-as.matrix(irisNoClass)
+
+Rockclusters<-rockCluster(irisNoClassMatrix,theta = 0.5,n = 3,fun = "dist")
+
+Rockclusters$x
+
+plot(Rockclusters$cl)
+
+plot(Rockclusters$cl,col = Rockclusters$cl)
+
+
+clusplot(irisNoClass,Rockclusters$cl,lines = 0,color = TRUE,shade = TRUE)
+
+```
+
